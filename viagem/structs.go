@@ -7,6 +7,11 @@ type ViagemData struct {
 	Data     []Viagem
 }
 
+type ViagemNota struct {
+	UltimoID int
+	Note     []Nota
+}
+
 type Nota struct {
 	ID          int       `json:"id"`
 	Conteudo    string    `json:"conteudo"`

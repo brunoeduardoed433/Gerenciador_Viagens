@@ -37,8 +37,7 @@ func iniciarMenu() {
 		case 4:
 			viagem.EditarCidade()
 		case 5:
-			//EditarNota()
-			fmt.Println("Em desenvolvimento")
+			viagem.EditarNota()
 		case 6:
 			viagem.DeletarCidade()
 		case 7:

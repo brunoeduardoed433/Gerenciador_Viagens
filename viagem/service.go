@@ -11,6 +11,7 @@ import (
 
 var proximoIdNota = 1
 var viagemData ViagemData
+var viagemNota ViagemNota
 
 func CadastrarViagem() {
 
@@ -58,6 +59,9 @@ func AdicionarNota() {
 
 		viagemData.Data[i].Notas = append(viagemData.Data[i].Notas, novaNota)
 		fmt.Println("Nota adicionada com sucesso.")
+
+		viagemNota.Note = viagemData.Data[i].Notas
+
 		viagemEncontrada = true
 
 		SalvarDados()
@@ -121,31 +125,37 @@ func EditarCidade() {
 	}
 }
 
-// func editarNota() {
-// 	var pegaID int
-// 	fmt.Println("Digite o ID da Viagem desejada: ")
-// 	fmt.Scanln(&pegaID)
-// 	notaEncontrada := false
-// 	for _, nota := range lista {
-// 		if nota. != pegaID {
-// 			continue
-// 		}
-// 		leitor := bufio.NewReader(os.Stdin)
-// 		fmt.Println("\nDigite a Nota correta para esta viagem : ")
-// 		novoDestino, _ := leitor.ReadString('\n')
-// 		novoDestino = strings.TrimSpace(novoDestino)
-// 		notaEncontrada = true
-// 		viagemData.Data[i] = Viagem{
-// 			Destino: novoDestino,
-// 			ID:      pegaID,
-// 		}
-// 	}
-// 	if notaEncontrada {
-// 		fmt.Println("Viagem editada com sucesso!")
-// 	} else {
-// 		fmt.Println("ID inválido! Tente novamente.")
-// 	}
-// }
+func EditarNota() {
+	var pegaID int
+
+	fmt.Println("Digite o ID da nota desejada: ")
+	fmt.Scanln(&pegaID)
+
+	notaEncontrada := false
+
+	for i := range viagemNota.Note {
+		if viagemNota.Note[i].ID != pegaID {
+			continue
+		}
+
+		leitor := bufio.NewReader(os.Stdin)
+		fmt.Println("\nDigite a Nota correta para esta viagem : ")
+		novaNota, _ := leitor.ReadString('\n')
+		novaNota = strings.TrimSpace(novaNota)
+		notaEncontrada = true
+
+		viagemNota.Note[i] = Nota{
+			ID:          pegaID,
+			Conteudo:    novaNota,
+			DataCriacao: time.Now(),
+		}
+	}
+	if notaEncontrada {
+		fmt.Println("Viagem editada com sucesso!")
+	} else {
+		fmt.Println("ID inválido! Tente novamente.")
+	}
+}
 
 func DeletarCidade() {
 	var buscaID int
