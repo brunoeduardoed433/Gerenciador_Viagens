@@ -24,7 +24,15 @@ func main() {
 func iniciarMenu() {
 	for {
 		var opcao int
-		fmt.Print("\n" + `OPÇÕES: ` + "\n\n" + `1. Cadastrar Viagem` + "\n" + `2. Adicionar Nota a uma Viagem` + "\n" + `3. Listar Tudo` + "\n" + "4. Editar Viagem" + "\n" + "5. Editar Nota" + "\n" + `6. Deletar Viagem` + "\n" + `7. Sair` + "\n")
+		fmt.Print("\n" + `OPÇÕES: ` + "\n\n" +
+			"1. Cadastrar Viagem" + "\n" +
+			"2. Adicionar Nota a uma Viagem" + "\n" +
+			"3. Listar Tudo" + "\n" +
+			"4. Editar Viagem" + "\n" +
+			"5. Editar Nota" + "\n" +
+			"6. Deletar Viagem" + "\n" +
+			"7  Visão Geral" + "\n" +
+			"8. Sair" + "\n")
 		fmt.Print("\nDigite a opção desejada: ")
 		fmt.Scanln(&opcao)
 		switch opcao {
@@ -41,6 +49,8 @@ func iniciarMenu() {
 		case 6:
 			viagem.DeletarCidade()
 		case 7:
+			viagem.VisaoGeral()
+		case 8:
 			fmt.Print("Saindo...")
 			return
 		default:

@@ -9,9 +9,7 @@ import (
 	"time"
 )
 
-var proximoIdNota = 1
 var viagemData ViagemData
-var viagemNota ViagemNota
 
 func CadastrarViagem() {
 
@@ -23,11 +21,11 @@ func CadastrarViagem() {
 	// Ele remove espaços e/ou \n no começo e final da string
 	destino = strings.TrimSpace(destino)
 
-	viagem := Viagem{ID: viagemData.UltimoID + 1, Destino: destino, Notas: []Nota{}}
-	novaViagemList := append(viagemData.Data, viagem)
-	viagemData.Data = novaViagemList
+	viagem := Viagem{ID: viagemData.ViagemUltimoID + 1, Destino: destino, Notas: []Nota{}}
+	novaViagemList := append(viagemData.Viagens, viagem)
+	viagemData.Viagens = novaViagemList
 
-	viagemData.UltimoID = viagemData.UltimoID + 1
+	viagemData.ViagemUltimoID = viagemData.ViagemUltimoID + 1
 
 	SalvarDados()
 }
@@ -40,9 +38,9 @@ func AdicionarNota() {
 	fmt.Scanln(&buscaID)
 
 	viagemEncontrada := false
-	for i := range viagemData.Data {
+	for i := range viagemData.Viagens {
 
-		if viagemData.Data[i].ID != buscaID {
+		if viagemData.Viagens[i].ID != buscaID {
 			continue
 		}
 
@@ -52,21 +50,17 @@ func AdicionarNota() {
 		comentario = strings.TrimSpace(comentario)
 
 		novaNota := Nota{
-			ID:          proximoIdNota,
+			ID:          viagemData.NotaUltimoID + 1,
 			Conteudo:    comentario,
 			DataCriacao: time.Now(),
 		}
 
-		viagemData.Data[i].Notas = append(viagemData.Data[i].Notas, novaNota)
-		fmt.Println("Nota adicionada com sucesso.")
-
-		viagemNota.Note = viagemData.Data[i].Notas
-
+		viagemData.Viagens[i].Notas = append(viagemData.Viagens[i].Notas, novaNota)
+		viagemData.NotaUltimoID = viagemData.NotaUltimoID + 1
+		SalvarDados()
 		viagemEncontrada = true
 
-		SalvarDados()
-
-		proximoIdNota++
+		fmt.Println("Nota adicionada com sucesso.")
 
 		return
 	}
@@ -78,12 +72,12 @@ func AdicionarNota() {
 
 func ListarTudo() {
 
-	if len(viagemData.Data) == 0 {
+	if len(viagemData.Viagens) == 0 {
 		fmt.Println("Nenhuma viagem cadastrada.")
 		return
 	}
 
-	for _, lista := range viagemData.Data {
+	for _, lista := range viagemData.Viagens {
 		fmt.Printf("[ID: %d] Viagem para: %s\n\n", lista.ID, lista.Destino)
 		for _, lista := range lista.Notas {
 			fmt.Printf("   - [ID: %d] Nota:  %s (%02d/%02d/%04d)\n", lista.ID, lista.Conteudo, lista.DataCriacao.Day(), lista.DataCriacao.Month(), lista.DataCriacao.Year())
@@ -99,8 +93,8 @@ func EditarCidade() {
 	fmt.Scanln(&pegaID)
 	viagemEncontrada := false
 
-	for i := range viagemData.Data {
-		if viagemData.Data[i].ID != pegaID {
+	for i := range viagemData.Viagens {
+		if viagemData.Viagens[i].ID != pegaID {
 			continue
 		}
 
@@ -110,7 +104,7 @@ func EditarCidade() {
 		novoDestino = strings.TrimSpace(novoDestino)
 		viagemEncontrada = true
 
-		viagemData.Data[i] = Viagem{
+		viagemData.Viagens[i] = Viagem{
 			Destino: novoDestino,
 			ID:      pegaID,
 		}
@@ -133,24 +127,37 @@ func EditarNota() {
 
 	notaEncontrada := false
 
-	for i := range viagemNota.Note {
-		if viagemNota.Note[i].ID != pegaID {
-			continue
+	for _, v := range viagemData.Viagens {
+		if notaEncontrada {
+			break
+		}
+		fmt.Printf("Viagem iterada %v\n", v.ID)
+
+		for i, n := range v.Notas {
+			if n.ID != pegaID {
+				continue
+			}
+
+			leitor := bufio.NewReader(os.Stdin)
+			fmt.Println("\nDigite a Nota correta para esta viagem : ")
+			novaNota, _ := leitor.ReadString('\n')
+			novaNota = strings.TrimSpace(novaNota)
+
+			v.Notas[i] = Nota{
+				ID:          pegaID,
+				Conteudo:    novaNota,
+				DataCriacao: time.Now(),
+			}
+
+			notaEncontrada = true
+			fmt.Printf("Nota encontrada %v\n", n.ID)
+			break
 		}
 
-		leitor := bufio.NewReader(os.Stdin)
-		fmt.Println("\nDigite a Nota correta para esta viagem : ")
-		novaNota, _ := leitor.ReadString('\n')
-		novaNota = strings.TrimSpace(novaNota)
-		notaEncontrada = true
-
-		viagemNota.Note[i] = Nota{
-			ID:          pegaID,
-			Conteudo:    novaNota,
-			DataCriacao: time.Now(),
-		}
 	}
+
 	if notaEncontrada {
+		SalvarDados()
 		fmt.Println("Viagem editada com sucesso!")
 	} else {
 		fmt.Println("ID inválido! Tente novamente.")
@@ -165,7 +172,7 @@ func DeletarCidade() {
 	fmt.Println("Digite o ID da viagem que deseja deletar: ")
 	fmt.Scanln(&buscaID)
 
-	for _, viagem := range viagemData.Data {
+	for _, viagem := range viagemData.Viagens {
 		if viagem.ID != buscaID {
 			novaViagemList = append(novaViagemList, viagem)
 			continue
@@ -173,12 +180,11 @@ func DeletarCidade() {
 		cidadeEncontrada = true
 	}
 
-	viagemData.Data = novaViagemList
-
-	SalvarDados()
+	viagemData.Viagens = novaViagemList
 
 	if cidadeEncontrada {
 		fmt.Print("\nCidade removida com sucesso\n")
+		SalvarDados()
 	} else {
 		fmt.Println("ID inválido! Tente novamente")
 	}
@@ -233,4 +239,30 @@ func SalvarDados() {
 		fmt.Println("Erro ao salvar arquivo: ", err)
 		return
 	}
+}
+
+func VisaoGeral() error {
+	var viagemComNotas int
+	//var NotasPorCidade int
+
+	totalViagens := len(viagemData.Viagens)
+	fmt.Printf("\nTotal de Viagens: %d", totalViagens)
+
+	for _, v := range viagemData.Viagens {
+		if len(v.Notas) > 0 {
+			viagemComNotas++
+		}
+
+		// for i := range viagemData.Viagens{
+		// 	if v.notas[i] == nil{
+
+		// 	}
+		// 	NotasPorCidade = 
+		// 	fmt.Printf("\nQuantidade de notas por viagem: [ID: %d] : %s - %s notas", v.ID, v.Destino, v.Notas)
+		// }
+	}
+	fmt.Printf("\nTotal de Viagens que possui notas: %d\n", viagemComNotas)
+
+	SalvarDados()
+	return nil
 }

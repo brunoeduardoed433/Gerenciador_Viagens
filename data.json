@@ -1,15 +1,1 @@
-{
-    "UltimoID": 2,
-    "Data": [
-        {
-            "id": 1,
-            "destino": "srs",
-            "nota": []
-        },
-        {
-            "id": 2,
-            "destino": "ita",
-            "nota": []
-        }
-    ]
-}
+{"viagem-ultimo-id":3,"nota-ultimo-id":2,"data":[{"id":1,"destino":"Santa Rita do Sapucai","nota":[{"id":1,"conteudo":"Euuuu","data-cricao":"2026-03-27T16:47:26.001929287-03:00"}]},{"id":2,"destino":"Rio Preto","nota":[{"id":2,"conteudo":"salve","data-cricao":"2026-03-27T16:48:31.002036515-03:00"}]},{"id":3,"destino":"Itajuba","nota":[]}]}
