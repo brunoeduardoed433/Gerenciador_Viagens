@@ -258,12 +258,12 @@ func VisaoGeral() {
 	fmt.Println("Total de notas por viagem: \n")
 
 	for _, v := range viagemData.Viagens {
+		notasPorViagem := len(v.Notas)
 
 		if len(v.Notas) == 0 {
 			fmt.Printf("[ID: %d] : %s - Nenhuma nota | ", v.ID, v.Destino)
-		} else {
-			notasPorViagem := len(v.Notas)
-			fmt.Printf("[ID: %d] : %s - %d notas | ", v.ID, v.Destino, notasPorViagem)
+			continue
 		}
+		fmt.Printf("[ID: %d] : %s - %d notas | ", v.ID, v.Destino, notasPorViagem)
 	}
 }
