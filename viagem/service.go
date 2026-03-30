@@ -228,7 +228,7 @@ func CarregarLista() error {
 func SalvarDados() {
 
 	bytesJson, err := json.Marshal(viagemData)
-	fmt.Println("Salvando dados...")
+	fmt.Println("\n\nSalvando dados...")
 	if err != nil {
 		fmt.Println("Erro ao converter para Json: ", err)
 		return
@@ -241,9 +241,8 @@ func SalvarDados() {
 	}
 }
 
-func VisaoGeral() error {
+func VisaoGeral() {
 	var viagemComNotas int
-	//var NotasPorCidade int
 
 	totalViagens := len(viagemData.Viagens)
 	fmt.Printf("\nTotal de Viagens: %d", totalViagens)
@@ -252,17 +251,19 @@ func VisaoGeral() error {
 		if len(v.Notas) > 0 {
 			viagemComNotas++
 		}
-
-		// for i := range viagemData.Viagens{
-		// 	if v.notas[i] == nil{
-
-		// 	}
-		// 	NotasPorCidade = 
-		// 	fmt.Printf("\nQuantidade de notas por viagem: [ID: %d] : %s - %s notas", v.ID, v.Destino, v.Notas)
-		// }
 	}
-	fmt.Printf("\nTotal de Viagens que possui notas: %d\n", viagemComNotas)
 
-	SalvarDados()
-	return nil
+	fmt.Printf("\nTotal de Viagens que possui notas: %d", viagemComNotas)
+	fmt.Println("")
+	fmt.Println("Total de notas por viagem: \n")
+
+	for _, v := range viagemData.Viagens {
+
+		if len(v.Notas) == 0 {
+			fmt.Printf("[ID: %d] : %s - Nenhuma nota | ", v.ID, v.Destino)
+		} else {
+			notasPorViagem := len(v.Notas)
+			fmt.Printf("[ID: %d] : %s - %d notas | ", v.ID, v.Destino, notasPorViagem)
+		}
+	}
 }
