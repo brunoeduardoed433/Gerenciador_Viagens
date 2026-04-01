@@ -8,10 +8,14 @@ type Viagem struct {
 	Notas   []Nota `json:"nota"`
 }
 
+type ViagemRequest struct {
+	Destino string `json:"destino" validate:"required"`
+}
+
 type ViagemData struct {
 	ViagemUltimoID int      `json:"viagem-ultimo-id"`
 	NotaUltimoID   int      `json:"nota-ultimo-id"`
-	Viagens           []Viagem `json:"data"`
+	Viagens        []Viagem `json:"data"`
 }
 
 type Nota struct {

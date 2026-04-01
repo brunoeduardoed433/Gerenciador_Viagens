@@ -1,8 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
+	"net/http"
+	"strconv"
 	"time"
 
 	"github.com.br/brunoeduardoed433/gerenciador_viagens/viagem"
@@ -11,50 +15,47 @@ import (
 func main() {
 
 	err := viagem.CarregarLista()
-
 	if err != nil {
 		slog.Error("Erro ao carregar lista", "erro", err, "data", time.Now())
 		panic(err)
 	}
 
-	iniciarMenu()
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /viagem/salvar", SalvarViagem)
+	mux.HandleFunc("PUT /viagem/editar/{id}", EditarViagem)
+
+	slog.Info("Servidor escutando em localhost:8080")
+	err = http.ListenAndServe(":8080", mux)
+	if err != nil {
+		panic(err)
+	}
 
 }
 
-func iniciarMenu() {
-	for {
-		var opcao int
-		fmt.Print("\n" + `OPÇÕES: ` + "\n\n" +
-			"1. Cadastrar Viagem" + "\n" +
-			"2. Adicionar Nota a uma Viagem" + "\n" +
-			"3. Listar Tudo" + "\n" +
-			"4. Editar Viagem" + "\n" +
-			"5. Editar Nota" + "\n" +
-			"6. Deletar Viagem" + "\n" +
-			"7  Visão Geral" + "\n" +
-			"8. Sair" + "\n")
-		fmt.Print("\nDigite a opção desejada: ")
-		fmt.Scanln(&opcao)
-		switch opcao {
-		case 1:
-			viagem.CadastrarViagem()
-		case 2:
-			viagem.AdicionarNota()
-		case 3:
-			viagem.ListarTudo()
-		case 4:
-			viagem.EditarCidade()
-		case 5:
-			viagem.EditarNota()
-		case 6:
-			viagem.DeletarCidade()
-		case 7:
-			viagem.VisaoGeral()
-		case 8:
-			fmt.Print("Saindo...")
-			return
-		default:
-			fmt.Println("Opção Inválida, tente novamente: ")
-		}
+func EditarViagem(escritor http.ResponseWriter, requisicao *http.Request) {
+	idStr := requisicao.PathValue("id")
+	id, _ := strconv.Atoi(idStr)
+	fmt.Println(id)
+}
+
+func SalvarViagem(escritor http.ResponseWriter, requisicao *http.Request) {
+	corpo, err := io.ReadAll(requisicao.Body)
+	if err != nil {
+		escritor.WriteHeader(http.StatusInternalServerError)
+		escritor.Write([]byte("Erro ao ler corpo da requisição!"))
+		return
 	}
+
+	var viagemRequest viagem.ViagemRequest
+	err = json.Unmarshal(corpo, &viagemRequest)
+	if err != nil {
+		escritor.WriteHeader(http.StatusBadRequest)
+		escritor.Write([]byte("Dados inválidos!"))
+		return
+	}
+
+	viagem.SalvarViagem(viagemRequest.Destino)
+
+	escritor.WriteHeader(http.StatusCreated)
+	escritor.Write([]byte("Viagem salva com sucesso!"))
 }

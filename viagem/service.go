@@ -11,17 +11,8 @@ import (
 
 var viagemData ViagemData
 
-func CadastrarViagem() {
-
-	// Cria entrada de dados como buffer para salvar os dados temporariamente até utiliza-los.
-	leitor := bufio.NewReader(os.Stdin)
-	fmt.Println("\nDigite o destino: ")
-	// Ele pega toda a string até encontrar um \n e atribui a variavel destino. E o "_" ignora uma outra variavel que retorna Erro se houver.
-	destino, _ := leitor.ReadString('\n')
-	// Ele remove espaços e/ou \n no começo e final da string
-	destino = strings.TrimSpace(destino)
-
-	viagem := Viagem{ID: viagemData.ViagemUltimoID + 1, Destino: destino, Notas: []Nota{}}
+func SalvarViagem(nomeViagem string) {
+	viagem := Viagem{ID: viagemData.ViagemUltimoID + 1, Destino: nomeViagem, Notas: []Nota{}}
 	novaViagemList := append(viagemData.Viagens, viagem)
 	viagemData.Viagens = novaViagemList
 
@@ -29,6 +20,7 @@ func CadastrarViagem() {
 
 	SalvarDados()
 }
+
 
 func AdicionarNota() {
 	var buscaID int
