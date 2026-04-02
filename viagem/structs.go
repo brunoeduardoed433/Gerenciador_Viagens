@@ -12,6 +12,10 @@ type ViagemRequest struct {
 	Destino string `json:"destino" validate:"required"`
 }
 
+type NotaRequest struct {
+	Nota string `json:"nota" validate:"required"`
+}
+
 type ViagemData struct {
 	ViagemUltimoID int      `json:"viagem-ultimo-id"`
 	NotaUltimoID   int      `json:"nota-ultimo-id"`
